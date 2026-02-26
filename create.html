@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация мероприятий - Добавить событие</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Регистрация мероприятий</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="calendar.html">Календарь</a></li>
+                    <li><a href="map.html">Карта</a></li>
+                    <li><a href="create.html" class="btn-create-nav active">+ Создать</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-menu-icon">☰</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="form-page-header">
+            <h1>Добавить событие (2026)</h1>
+            <p style="color: var(--text-light)">Данные сохранятся автоматически</p>
+        </div>
+        
+        <form class="multi-step-form" id="eventForm">
+            <input type="radio" name="step" id="step1" checked>
+            <input type="radio" name="step" id="step2">
+            <input type="radio" name="step" id="step3">
+            <input type="radio" name="step" id="step4">
+
+            <fieldset class="form-step step-1">
+                <legend>Основная информация</legend>
+                <div class="form-group">
+                    <label for="evt-name">Название события</label>
+                    <input type="text" id="evt-name" required placeholder="Например: Рок фестиваль 2026">
+                </div>
+                <div class="form-group">
+                    <label for="evt-cat">Категория</label>
+                    <select id="evt-cat" required>
+                        <option value="">Выберите...</option>
+                        <option value="music">Музыка</option>
+                        <option value="tech">IT</option>
+                        <option value="art">Искусство</option>
+                    </select>
+                </div>
+                <div class="form-actions">
+                    <label for="step2" class="btn btn-next">Далее ➝</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-step step-2">
+                <legend>Дата и Место</legend>
+                <div class="form-group">
+                    <label for="evt-date">Дата</label>
+                    <input type="date" id="evt-date" required min="2026-01-01">
+                </div>
+                <div class="form-group">
+                    <label>Выберите место на карте (кликните)</label>
+                    <div id="form-map" style="height: 300px; border-radius: 8px;"></div>
+                    <input type="hidden" id="evt-lat">
+                    <input type="hidden" id="evt-lng">
+                    <input type="text" id="evt-loc" required placeholder="Адрес" style="margin-top:10px;">
+                    <p id="coords-display" style="font-size:0.8rem; color:#777; margin-top:5px;">Координаты не выбраны</p>
+                </div>
+                <div class="form-actions">
+                    <label for="step1" class="btn btn-prev">↼ Назад</label>
+                    <label for="step3" class="btn btn-next">Далее ➝</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-step step-3">
+                <legend>Билеты и Описание</legend>
+                <div class="form-group">
+                    <label for="evt-desc">Описание</label>
+                    <textarea id="evt-desc" rows="4" placeholder="Расскажите подробнее..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="evt-tickets">Количество билетов</label>
+                    <input type="number" id="evt-tickets" min="1" max="5000" required value="100">
+                </div>
+                <div class="form-actions">
+                    <label for="step2" class="btn btn-prev">↼ Назад</label>
+                    <label for="step4" class="btn btn-next">Далее ➝</label>
+                </div>
+            </fieldset>
+
+            <fieldset class="form-step step-4">
+                <legend>Подтверждение</legend>
+                <div class="success-message">
+                    <p>Проверьте данные перед отправкой.</p>
+                    <ul class="summary-list">
+                        <li>Название: <span id="sum-name">...</span></li>
+                        <li>Дата: <span id="sum-date">...</span></li>
+                        <li>Билетов: <span id="sum-tickets">...</span></li>
+                    </ul>
+                </div>
+                <div class="form-actions">
+                    <label for="step3" class="btn btn-prev">↼ Назад</label>
+                    <button type="submit" class="btn btn-submit">✨ Опубликовать</button>
+                </div>
+            </fieldset>
+        </form>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container"><p>&copy; 2026 Регистрация мероприятий.</p></div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const STORAGE_KEY = 'eventfinder_data_2026_v2';
+        const IMAGES = {
+            music: "https://images.unsplash.com/photo-1459749411177-287ce38e8b7c?auto=format&fit=crop&w=800&q=80",
+            tech: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=800&q=80",
+            art: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=800&q=80"
+        };
+
+        let formMap, marker;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapContainer = document.getElementById('form-map');
+            if (mapContainer) {
+                formMap = L.map('form-map').setView([55.751244, 37.618423], 11);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap'
+                }).addTo(formMap);
+
+                formMap.on('click', function(e) {
+                    if (marker) formMap.removeLayer(marker);
+                    marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(formMap);
+                    document.getElementById('evt-lat').value = e.latlng.lat;
+                    document.getElementById('evt-lng').value = e.latlng.lng;
+                    document.getElementById('coords-display').innerText = `Выбрано: ${e.latlng.lat.toFixed(4)}, ${e.latlng.lng.toFixed(4)}`;
+                });
+            }
+
+            const inputs = document.querySelectorAll('input[name="step"]');
+            inputs.forEach(input => {
+                input.addEventListener('change', () => {
+                    if (formMap) setTimeout(() => formMap.invalidateSize(), 100);
+                    if(input.id === 'step4') updateSummary();
+                });
+            });
+
+            const form = document.getElementById('eventForm');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const cat = document.getElementById('evt-cat').value;
+                    
+                    const newEvent = {
+                        id: Date.now(),
+                        title: document.getElementById('evt-name').value,
+                        category: cat,
+                        date: document.getElementById('evt-date').value,
+                        location: document.getElementById('evt-loc').value,
+                        lat: parseFloat(document.getElementById('evt-lat').value) || 55.751244,
+                        lng: parseFloat(document.getElementById('evt-lng').value) || 37.618423,
+                        description: document.getElementById('evt-desc').value,
+                        totalTickets: parseInt(document.getElementById('evt-tickets').value),
+                        soldTickets: 0,
+                        image: IMAGES[cat] || IMAGES.music
+                    };
+
+                    try {
+                        const stored = localStorage.getItem(STORAGE_KEY);
+                        let events = stored ? JSON.parse(stored) : [];
+                        events.push(newEvent);
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+                        
+                        alert('✅ Событие успешно создано и сохранено!');
+                        window.location.href = 'index.html';
+                    } catch (err) {
+                        alert('❌ Ошибка сохранения: ' + err.message);
+                    }
+                });
+            }
+        });
+
+        function updateSummary() {
+            const name = document.getElementById('evt-name');
+            const date = document.getElementById('evt-date');
+            const tickets = document.getElementById('evt-tickets');
+            
+            if(name) document.getElementById('sum-name').innerText = name.value;
+            if(date) document.getElementById('sum-date').innerText = date.value;
+            if(tickets) document.getElementById('sum-tickets').innerText = tickets.value;
+        }
+    </script>
+</body>
+</html>

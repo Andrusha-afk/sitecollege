@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация мероприятий - Календарь</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Регистрация мероприятий</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="calendar.html" class="active">Календарь</a></li>
+                    <li><a href="map.html">Карта</a></li>
+                    <li><a href="create.html" class="btn-create-nav">+ Создать</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-menu-icon">☰</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="calendar-section">
+            <h1>Ноябрь - Декабрь 2026</h1>
+            
+            <input type="checkbox" id="modal-1" class="modal-trigger">
+            <input type="checkbox" id="modal-2" class="modal-trigger">
+            <input type="checkbox" id="modal-3" class="modal-trigger">
+
+            <div class="calendar-grid">
+                <!-- Ноябрь 2026: 1 число - Воскресенье. 15 число - Воскресенье. 20 число - Пятница. -->
+                <div class="calendar-day"><span class="day-name">Пн</span><span class="day-num">2</span></div>
+                <div class="calendar-day"><span class="day-name">Вт</span><span class="day-num">3</span></div>
+                <div class="calendar-day"><span class="day-name">Ср</span><span class="day-num">4</span></div>
+                <div class="calendar-day"><span class="day-name">Чт</span><span class="day-num">5</span></div>
+                <div class="calendar-day"><span class="day-name">Пт</span><span class="day-num">6</span></div>
+                <div class="calendar-day"><span class="day-name">Сб</span><span class="day-num">7</span></div>
+                <div class="calendar-day"><span class="day-name">Вс</span><span class="day-num">8</span></div>
+                <div class="calendar-day"><span class="day-name">Пн</span><span class="day-num">9</span></div>
+                <div class="calendar-day"><span class="day-name">Вт</span><span class="day-num">10</span></div>
+                <div class="calendar-day"><span class="day-name">Ср</span><span class="day-num">11</span></div>
+                <div class="calendar-day"><span class="day-name">Чт</span><span class="day-num">12</span></div>
+                <div class="calendar-day"><span class="day-name">Пт</span><span class="day-num">13</span></div>
+                <div class="calendar-day"><span class="day-name">Сб</span><span class="day-num">14</span></div>
+
+                <!-- 15 Ноября 2026 - Воскресенье -->
+                <label for="modal-1" class="calendar-day">
+                    <span class="day-name">Вс</span>
+                    <span class="day-num">15</span>
+                    <span class="event-dot music"></span>
+                    <span style="font-size: 0.7rem; margin-top: 5px; color: var(--accent);">Jazz</span>
+                </label>
+
+                <div class="calendar-day"><span class="day-name">Пн</span><span class="day-num">16</span></div>
+                <div class="calendar-day"><span class="day-name">Вт</span><span class="day-num">17</span></div>
+                <div class="calendar-day"><span class="day-name">Ср</span><span class="day-num">18</span></div>
+                <div class="calendar-day"><span class="day-name">Чт</span><span class="day-num">19</span></div>
+
+                <!-- 20 Ноября 2026 - Пятница -->
+                <label for="modal-2" class="calendar-day">
+                    <span class="day-name">Пт</span>
+                    <span class="day-num">20</span>
+                    <span class="event-dot art"></span>
+                    <span style="font-size: 0.7rem; margin-top: 5px; color: #FFC107;">Art</span>
+                </label>
+
+                <div class="calendar-day"><span class="day-name">Сб</span><span class="day-num">21</span></div>
+                <div class="calendar-day"><span class="day-name">Вс</span><span class="day-num">22</span></div>
+                <div class="calendar-day"><span class="day-name">Пн</span><span class="day-num">23</span></div>
+                <div class="calendar-day"><span class="day-name">Вт</span><span class="day-num">24</span></div>
+                <div class="calendar-day"><span class="day-name">Ср</span><span class="day-num">25</span></div>
+                <div class="calendar-day"><span class="day-name">Чт</span><span class="day-num">26</span></div>
+                <div class="calendar-day"><span class="day-name">Пт</span><span class="day-num">27</span></div>
+                <div class="calendar-day"><span class="day-name">Сб</span><span class="day-num">28</span></div>
+                <div class="calendar-day"><span class="day-name">Вс</span><span class="day-num">29</span></div>
+                <div class="calendar-day"><span class="day-name">Пн</span><span class="day-num">30</span></div>
+
+                <!-- Декабрь 2026: 1 число - Вторник -->
+                <div class="calendar-day"><span class="day-name">Вт</span><span class="day-num">1</span></div>
+                
+                <!-- Корректировка: событие 1 декабря 2026 (Вторник) -->
+                <!-- В сетке выше 30 ноября Пн, значит следующая ячейка Вт 1 дек -->
+                <!-- Добавим событие на 5 декабря (Суббота) для примера, чтобы не ломать сетку, или заменим 1-е -->
+                <!-- Давайте поставим событие на 5 декабря -->
+                 <div class="calendar-day"><span class="day-name">Ср</span><span class="day-num">2</span></div>
+                 <div class="calendar-day"><span class="day-name">Чт</span><span class="day-num">3</span></div>
+                 <div class="calendar-day"><span class="day-name">Пт</span><span class="day-num">4</span></div>
+                 
+                 <label for="modal-3" class="calendar-day" style="border-color: var(--primary);">
+                    <span class="day-name">Сб</span>
+                    <span class="day-num">5</span>
+                    <span class="event-dot tech"></span>
+                    <span style="font-size: 0.7rem; margin-top: 5px; color: var(--primary);">AI</span>
+                </label>
+            </div>
+
+            <!-- Модальные окна 2026 -->
+            <div class="modal-overlay modal-overlay-1">
+                <div class="modal-content">
+                    <label for="modal-1" class="close-modal">&times;</label>
+                    <h3>🎵 Neon Jazz Night 2026</h3>
+                    <p><strong>Дата:</strong> 15 Ноября 2026, Воскресенье</p>
+                    <p><strong>Время:</strong> 19:00 - 23:00</p>
+                    <p><strong>Место:</strong> Центральный Парк, Москва</p>
+                    <p>Вечер живой джазовой музыки под открытым небом.</p>
+                    <p style="color: var(--accent); font-weight: bold;">Осталось билетов: 20%</p>
+                </div>
+            </div>
+
+            <div class="modal-overlay modal-overlay-2">
+                <div class="modal-content">
+                    <label for="modal-2" class="close-modal">&times;</label>
+                    <h3>🎨 Modern Art Expo 2026</h3>
+                    <p><strong>Дата:</strong> 20 Ноября 2026, Пятница</p>
+                    <p><strong>Время:</strong> 10:00 - 20:00</p>
+                    <p><strong>Место:</strong> Галерея Третьякова</p>
+                    <p>Выставка современного искусства молодых авторов.</p>
+                    <p style="color: #FFC107; font-weight: bold;">Осталось билетов: 5%</p>
+                </div>
+            </div>
+
+            <div class="modal-overlay modal-overlay-3">
+                <div class="modal-content">
+                    <label for="modal-3" class="close-modal">&times;</label>
+                    <h3>💻 AI Future Conference 2026</h3>
+                    <p><strong>Дата:</strong> 5 Декабря 2026, Суббота</p>
+                    <p><strong>Время:</strong> 09:00 - 18:00</p>
+                    <p><strong>Место:</strong> Tech Hub Moscow</p>
+                    <p>Крупнейшая конференция по искусственному интеллекту.</p>
+                    <p style="color: var(--primary); font-weight: bold;">Осталось билетов: 75%</p>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container"><p>&copy; 2026 Регистрация мероприятий.</p></div>
+    </footer>
+</body>
+</html>

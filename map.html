@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация мероприятий - Карта</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Регистрация мероприятий</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html">Главная</a></li>
+                    <li><a href="calendar.html">Календарь</a></li>
+                    <li><a href="map.html" class="active">Карта</a></li>
+                    <li><a href="create.html" class="btn-create-nav">+ Создать</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-menu-icon">☰</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="map-page-header">
+            <h1>Карта мероприятий 2026</h1>
+            <p style="color: var(--text-light)">Отображаются все сохраненные события</p>
+        </div>
+        
+        <div class="css-map-wrapper">
+            <div id="main-map" style="height: 500px; border-radius: 8px;"></div>
+        </div>
+        
+        <div class="map-instructions">
+            <p>💡 Кликните на маркер для деталей.</p>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container"><p>&copy; 2026 Регистрация мероприятий.</p></div>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const STORAGE_KEY = 'eventfinder_data_2026_v2';
+        
+        const DEFAULT_EVENTS = [
+            { title: "Neon Jazz Night 2026", date: "2026-11-15", location: "Центральный Парк", lat: 55.751244, lng: 37.618423, icon: '🎵', category: 'music' },
+            { title: "AI Future Conf 2026", date: "2026-12-05", location: "Tech Hub Moscow", lat: 55.755814, lng: 37.617635, icon: '💻', category: 'tech' },
+            { title: "Modern Art Expo 2026", date: "2026-11-20", location: "Галерея Третьякова", lat: 55.741456, lng: 37.620903, icon: '🎨', category: 'art' }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const map = L.map('main-map').setView([55.751244, 37.618423], 11);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            let events = [];
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                events = stored ? JSON.parse(stored) : DEFAULT_EVENTS;
+            } catch (e) {
+                console.error("Ошибка загрузки событий для карты", e);
+                events = DEFAULT_EVENTS;
+            }
+
+            events.forEach(function(evt) {
+                if (!evt.lat || !evt.lng) return; 
+
+                let iconChar = '📍';
+                if (evt.category === 'music') iconChar = '🎵';
+                else if (evt.category === 'tech') iconChar = '💻';
+                else if (evt.category === 'art') iconChar = '🎨';
+
+                const customIcon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style='background-color:var(--primary); color:white; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; box-shadow:0 2px 5px rgba(0,0,0,0.3);'>${iconChar}</div>`,
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+
+                const marker = L.marker([evt.lat, evt.lng], {icon: customIcon}).addTo(map);
+                
+                let dateStr = evt.date;
+                try { dateStr = new Date(evt.date).toLocaleDateString('ru-RU'); } catch(e){}
+
+                marker.bindPopup(`
+                    <strong>${evt.title || 'Событие'}</strong><br>
+                    📅 ${dateStr}<br>
+                    📍 ${evt.location || ''}<br>
+                    <small>${evt.description || ''}</small>
+                `);
+            });
+        });
+    </script>
+</body>
+</html>

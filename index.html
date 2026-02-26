@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация мероприятий - Главная</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">Регистрация мероприятий</a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">Главная</a></li>
+                    <li><a href="calendar.html">Календарь</a></li>
+                    <li><a href="map.html">Карта</a></li>
+                    <li><a href="create.html" class="btn-create-nav">+ Создать</a></li>
+                </ul>
+            </nav>
+            <div class="mobile-menu-icon">☰</div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="filters-section">
+            <input type="radio" name="category-filter" id="filter-all" checked>
+            <input type="radio" name="category-filter" id="filter-music">
+            <input type="radio" name="category-filter" id="filter-tech">
+            <input type="radio" name="category-filter" id="filter-art">
+
+            <div class="filter-buttons">
+                <label for="filter-all" class="filter-btn">Все</label>
+                <label for="filter-music" class="filter-btn">🎵 Музыка</label>
+                <label for="filter-tech" class="filter-btn">💻 IT</label>
+                <label for="filter-art" class="filter-btn">🎨 Искусство</label>
+            </div>
+
+            <div class="events-grid" id="events-container">
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container"><p>&copy; 2026 Регистрация мероприятий.</p></div>
+    </footer>
+
+    <script>
+        const STORAGE_KEY = 'eventfinder_data_2026_v2'; 
+
+        const IMAGES = {
+            music: "https://images.unsplash.com/photo-1459749411177-287ce38e8b7c?auto=format&fit=crop&w=800&q=80",
+            tech: "https://images.unsplash.com/photo-1544531586-fde5298cdd40?auto=format&fit=crop&w=800&q=80",
+            art: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&w=800&q=80"
+        };
+
+        const DEFAULT_EVENTS = [
+            {
+                id: 1,
+                title: "Neon Jazz Night 2026",
+                category: "music",
+                date: "2026-11-15",
+                location: "Центральный Парк, Москва",
+                lat: 55.751244,
+                lng: 37.618423,
+                totalTickets: 500,
+                soldTickets: 400,
+                image: IMAGES.music
+            },
+            {
+                id: 2,
+                title: "AI Future Conf 2026",
+                category: "tech",
+                date: "2026-12-05",
+                location: "Tech Hub Moscow",
+                lat: 55.755814,
+                lng: 37.617635,
+                totalTickets: 200,
+                soldTickets: 50,
+                image: IMAGES.tech
+            },
+            {
+                id: 3,
+                title: "Modern Art Expo 2026",
+                category: "art",
+                date: "2026-11-20",
+                location: "Галерея Третьякова",
+                lat: 55.741456,
+                lng: 37.620903,
+                totalTickets: 100,
+                soldTickets: 95,
+                image: IMAGES.art
+            }
+        ];
+
+        function getEvents() {
+            try {
+                const stored = localStorage.getItem(STORAGE_KEY);
+                if (stored) {
+                    return JSON.parse(stored);
+                }
+            } catch (e) {
+                console.error("Ошибка чтения данных:", e);
+                localStorage.removeItem(STORAGE_KEY); 
+            }
+            return DEFAULT_EVENTS;
+        }
+
+        function renderEvents(events) {
+            const container = document.getElementById('events-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+
+            if (!events || events.length === 0) {
+                container.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Событий пока нет. <a href="create.html" style="color:var(--primary)">Создайте первое!</a></p>';
+                return;
+            }
+
+            events.forEach(event => {
+                const percent = Math.min(100, (event.soldTickets / event.totalTickets) * 100);
+                const left = event.totalTickets - event.soldTickets;
+                const catName = event.category === 'music' ? 'Music' : event.category === 'tech' ? 'Tech' : 'Art';
+                
+                let dateStr = event.date;
+                try {
+                    dateStr = new Date(event.date).toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+                } catch(e) {}
+
+                const card = document.createElement('article');
+                card.className = `event-card cat-${event.category} show-all show-${event.category}`;
+                card.innerHTML = `
+                    <div class="card-image">
+                        <img src="${event.image || IMAGES[event.category]}" alt="${event.title}" loading="lazy" onerror="this.src='https://via.placeholder.com/800x600?text=No+Image'">
+                        <span class="badge">${catName}</span>
+                    </div>
+                    <div class="card-content">
+                        <h3>${event.title || 'Без названия'}</h3>
+                        <p class="date">📅 ${dateStr}</p>
+                        <p class="location">📍 ${event.location || 'Место не указано'}</p>
+                        <div class="ticket-progress">
+                            <div class="progress-info"><span>Осталось мест</span><span>${left}</span></div>
+                            <div class="progress-bar"><div class="progress-fill" style="width: ${percent}%"></div></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            
+            initFilters();
+        }
+
+        function initFilters() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const allCards = document.querySelectorAll('.event-card');
+            
+            filterBtns.forEach(btn => {
+                btn.onclick = function() {
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const category = this.getAttribute('for').replace('filter-', '');
+                    
+                    allCards.forEach(card => {
+                        if (category === 'all') {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = card.classList.contains(`show-${category}`) ? 'block' : 'none';
+                        }
+                    });
+                };
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                const events = getEvents();
+                renderEvents(events);
+            } catch (e) {
+                console.error("Критическая ошибка при запуске:", e);
+                document.getElementById('events-container').innerHTML = '<p>Произошла ошибка при загрузке событий. Попробуйте обновить страницу.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
